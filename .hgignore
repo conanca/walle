@@ -1,0 +1,10 @@
+
+syntax: glob
+.settings
+.classpath
+.project
+*.pyc
+build
+classes
+dist
+bin
