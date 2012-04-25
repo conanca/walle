@@ -215,7 +215,6 @@ public class WalleHttpClient {
 	 * @param formparamMap
 	 * @param requEncoding
 	 * @return
-	 * @throws UnsupportedEncodingException
 	 */
 	private HttpEntity excuteHttpPost2(String url, Map<String, List<String>> formparamMap, String requEncoding) {
 		// 设置post请求的表单参数
@@ -254,8 +253,6 @@ public class WalleHttpClient {
 	 * @param reqEntity
 	 * @param respEncoding
 	 * @return
-	 * @throws ParseException
-	 * @throws IOException
 	 */
 	public String httpPostHtml(String url, InputStream in, String contentType, String respEncoding) {
 		return HttpEntityHelper.entity2String(excuteHttpPost(url, in, contentType), respEncoding);
@@ -266,7 +263,6 @@ public class WalleHttpClient {
 	 * @param url
 	 * @param formparamMap
 	 * @param requEncoding
-	 * @throws IOException
 	 */
 	public boolean httpPost(String url, Map<String, String> formparamMap, String requEncoding) {
 		HttpEntity httpEntity = excuteHttpPost(url, formparamMap, requEncoding);
@@ -284,9 +280,6 @@ public class WalleHttpClient {
 	 * @param requEncoding
 	 * @param respEncoding
 	 * @return
-	 * @throws UnsupportedEncodingException 
-	 * @throws ParseException
-	 * @throws IOException
 	 */
 	public String httpPostHtml(String url, Map<String, String> formparamMap, String requEncoding,
 			String respEncoding) {
@@ -298,7 +291,6 @@ public class WalleHttpClient {
 	 * @param url
 	 * @param formparamMap
 	 * @param requEncoding
-	 * @throws IOException
 	 */
 	public boolean httpPost2(String url, Map<String, List<String>> formparamMap, String requEncoding) {
 		HttpEntity httpEntity = excuteHttpPost2(url, formparamMap, requEncoding);
@@ -316,8 +308,6 @@ public class WalleHttpClient {
 	 * @param requEncoding
 	 * @param respEncoding
 	 * @return
-	 * @throws ParseException
-	 * @throws IOException
 	 */
 	public String httpPostHtml2(String url, Map<String, List<String>> formparamMap,
 			String requEncoding, String respEncoding) {
@@ -328,8 +318,6 @@ public class WalleHttpClient {
 	 * 执行get请求
 	 * @param url
 	 * @return
-	 * @throws ClientProtocolException
-	 * @throws IOException
 	 */
 	private HttpEntity excuteHttpGet(String url) {
 		// 先终止上次的请求
@@ -344,7 +332,6 @@ public class WalleHttpClient {
 	/**
 	 * GET方式访问一个Url
 	 * @param url
-	 * @throws IOException
 	 */
 	public boolean httpGet(String url) {
 		HttpEntity httpEntity = excuteHttpGet(url);
@@ -360,8 +347,6 @@ public class WalleHttpClient {
 	 * @param url
 	 * @param respEncoding
 	 * @return
-	 * @throws ParseException
-	 * @throws IOException
 	 */
 	public String httpGetHtml(String url, String respEncoding) {
 		return HttpEntityHelper.entity2String(excuteHttpGet(url), respEncoding);
@@ -372,8 +357,6 @@ public class WalleHttpClient {
 	 * TODO 目前形如http://xxx.com/downloadfile?id=123这样的下载的文件有问题，是纯文本的
 	 * @param url
 	 * @param filePath
-	 * @throws IllegalStateException 
-	 * @throws IOException
 	 */
 	public boolean httpGetDownload(String url, String filePath) {
 		HttpEntity entity = excuteHttpGet(url);
