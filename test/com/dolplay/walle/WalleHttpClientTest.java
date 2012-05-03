@@ -1,13 +1,12 @@
 package com.dolplay.walle;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class WalleHttpClientTest {
@@ -51,8 +50,27 @@ public class WalleHttpClientTest {
 
 	@Test
 	public void testhttpGetDownloadWithRightUrl() {
-		boolean isSuccess = client.httpGetDownload("http://mirrors.devlib.org/apache//commons/jelly/binaries/commons-jelly-1.0.zip", "d:\\");
+		boolean isSuccess = client.httpGetDownload(
+				"http://mirrors.devlib.org/apache//commons/jelly/binaries/commons-jelly-1.0.zip", "d:\\");
 		assertEquals(true, isSuccess);
+	}
+
+	@Test
+	public void testAccessWebServiceSOAP11() throws IOException {
+		InputStream in = new FileInputStream("soap11.xml");
+		String a = client.httpPostHtml("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
+				"text/xml; charset=utf-8", "UTF-8");
+		System.out.println(a);
+		assertNotNull(a);
+	}
+
+	@Test
+	public void testAccessWebServiceSOAP12() throws IOException {
+		InputStream in = new FileInputStream("soap12.xml");
+		String a = client.httpPostHtml("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
+				"application/soap+xml; charset=utf-8", "UTF-8");
+		System.out.println(a);
+		assertNotNull(a);
 	}
 	//	@BeforeClass
 	//	public static void setUpBeforeClass() throws Exception {
