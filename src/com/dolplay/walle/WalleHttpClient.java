@@ -1,8 +1,6 @@
 package com.dolplay.walle;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +15,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -245,16 +241,16 @@ public class WalleHttpClient {
 		HttpEntityHelper.consumeResponseEntity(httpEntity);
 		return true;
 	}
-	
+
 	/**
-	 * 传一个输入流,执行post请求,返回响应的html内容
+	 * 传一个输入流,执行post请求,返回响应的String内容
 	 * 可用于访问Web Service
 	 * @param url
 	 * @param reqEntity
 	 * @param respEncoding
 	 * @return
 	 */
-	public String httpPostHtml(String url, InputStream in, String contentType, String respEncoding) {
+	public String httpPostResp(String url, InputStream in, String contentType, String respEncoding) {
 		return HttpEntityHelper.entity2String(excuteHttpPost(url, in, contentType), respEncoding);
 	}
 
@@ -272,17 +268,16 @@ public class WalleHttpClient {
 		HttpEntityHelper.consumeResponseEntity(httpEntity);
 		return true;
 	}
-	
+
 	/**
-	 * 传表单参数Map,执行post请求,返回响应的html内容
+	 * 传表单参数Map,执行post请求,返回响应的String内容
 	 * @param url
 	 * @param formparamMap
 	 * @param requEncoding
 	 * @param respEncoding
 	 * @return
 	 */
-	public String httpPostHtml(String url, Map<String, String> formparamMap, String requEncoding,
-			String respEncoding) {
+	public String httpPostResp(String url, Map<String, String> formparamMap, String requEncoding, String respEncoding) {
 		return HttpEntityHelper.entity2String(excuteHttpPost(url, formparamMap, requEncoding), respEncoding);
 	}
 
@@ -302,15 +297,15 @@ public class WalleHttpClient {
 	}
 
 	/**
-	 * 传表单参数Map,执行post请求,返回响应的html内容(用于参数值含多选框或checkbox的)
+	 * 传表单参数Map,执行post请求,返回响应的String内容(用于表单参数含多选框或checkbox的)
 	 * @param url
 	 * @param formparamMap
 	 * @param requEncoding
 	 * @param respEncoding
 	 * @return
 	 */
-	public String httpPostHtml2(String url, Map<String, List<String>> formparamMap,
-			String requEncoding, String respEncoding) {
+	public String httpPostResp2(String url, Map<String, List<String>> formparamMap, String requEncoding,
+			String respEncoding) {
 		return HttpEntityHelper.entity2String(excuteHttpPost2(url, formparamMap, requEncoding), respEncoding);
 	}
 
@@ -343,12 +338,12 @@ public class WalleHttpClient {
 	}
 
 	/**
-	 * 执行get请求,返回响应的html内容
+	 * 执行get请求,返回响应的String内容
 	 * @param url
 	 * @param respEncoding
 	 * @return
 	 */
-	public String httpGetHtml(String url, String respEncoding) {
+	public String httpGetResp(String url, String respEncoding) {
 		return HttpEntityHelper.entity2String(excuteHttpGet(url), respEncoding);
 	}
 
