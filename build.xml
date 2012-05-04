@@ -1,0 +1,53 @@
+<project name="walle" default="dist" basedir=".">
+    <description>
+    	walle 的 build 文件
+    </description>
+  <!-- 设置全局变量 -->
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="classes" location="${build}/classes"/>
+  <property name="dist"  location="dist"/>
+
+  <property name="DEPHOME" value="./lib" />
+  <property environment="env" />
+
+ <!-- 设置编译时用到的 CLASSPATH  -->
+  <path id="CLASSPATH">
+    <fileset dir="${DEPHOME}" casesensitive="no">
+     <include name="*.jar" />
+    </fileset>
+    <pathelement location="${env.JAVA_HOME}/lib/rt.jar" />
+  </path>
+
+  <target name="init" depends="clean">
+    <!-- 建立时间戳 -->
+    <tstamp/>
+    <!-- 创建编译时所用到的 build 目录 -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${classes}"/>
+  </target>
+
+  <target name="compile" depends="init"
+        description="compile the source " >
+    <!-- 编译 java 代码——从 ${src} 到 ${build} -->
+    <javac debug="true" srcdir="${src}" destdir="${classes}" includeantruntime="on" encoding="UTF-8">
+      <compilerarg value="-Xlint:all" />
+      <classpath refid="CLASSPATH" />
+    </javac>
+  </target>
+
+  <target name="dist" depends="compile"
+        description="generate the distribution" >
+  	<!-- 将 ${classes} 下面所有的东西打包成 walle.jar 文件 -->
+  	<jar destfile="${dist}/walle.jar" basedir="${classes}"/>
+  	<!-- 将 ${src} 下面所有的东西打包成 walle-source.jar 文件 -->
+  	<jar destfile="${dist}/walle-source.jar" basedir="${src}"/>
+  </target>
+
+  <target name="clean"
+        description="clean up" >
+    <!-- 删除 ${build} 和 ${dist} 这两个目录 -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>
