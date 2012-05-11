@@ -34,18 +34,27 @@ import org.apache.http.params.HttpProtocolParams;
  *
  */
 public class WalleHttpClient {
-	final private static Log logger = LogFactory.getLog(WalleHttpClient.class);
-	final static private int DEFAULTTIMEOUT = 5000;
+	private static final Log log = LogFactory.getLog(WalleHttpClient.class);
+	private static final int DEFAULTTIMEOUT = 5000;
+	private static final String DEFAULTUSERAGENT = UserAgent.IE8;
+	private static final String DEFAULTREQUENCODING = "UTF-8";
+	private static final String DEFAULTRESPENCODING = "UTF-8";
 
 	static {
 		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
 	}
 
 	private DefaultHttpClient httpclient;
+	
 	private HttpHost proxy;
-	private int timeOut = DEFAULTTIMEOUT;
+	private int timeOut;
+	private String userAgent;
+	private String requEncoding;
+	private String respEncoding;
+	
 	private HttpGet currentHttpGet;
 	private HttpPost currentHttpPost;
+	
 	private int currentStatusCode;
 	private String currentRedirectUrl;
 	private List<Cookie> currentCookies;
@@ -55,8 +64,7 @@ public class WalleHttpClient {
 	 * 构造一个无代理单线程的 WalleBrowser
 	 */
 	public WalleHttpClient() {
-		super();
-		initHttpClient();
+		this(null);
 	}
 
 	/**
@@ -64,9 +72,17 @@ public class WalleHttpClient {
 	 * @param proxy
 	 */
 	public WalleHttpClient(HttpHost proxy) {
+		this(DEFAULTTIMEOUT, DEFAULTUSERAGENT, DEFAULTREQUENCODING, DEFAULTRESPENCODING, proxy);
+	}
+
+	public WalleHttpClient(int timeOut, String userAgent, String requEncoding, String respEncoding, HttpHost proxy) {
 		super();
+		this.timeOut = timeOut;
+		this.userAgent = userAgent;
+		this.requEncoding = requEncoding;
+		this.respEncoding = respEncoding;
+		this.proxy = proxy;
 		initHttpClient();
-		setProxy(proxy);
 	}
 
 	/**
@@ -75,12 +91,16 @@ public class WalleHttpClient {
 	public void initHttpClient() {
 		httpclient = new DefaultHttpClient();
 		HttpParams params = httpclient.getParams();
-		params.setParameter(CoreConnectionPNames.SO_TIMEOUT, DEFAULTTIMEOUT);
-		HttpProtocolParams.setContentCharset(params, "UTF-8");
-		HttpProtocolParams.setHttpElementCharset(params, "UTF-8");
-		HttpProtocolParams.setUserAgent(params, BrowserType.IE8);
+		params.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeOut);
+		HttpProtocolParams.setContentCharset(params, respEncoding);
+		HttpProtocolParams.setHttpElementCharset(params, respEncoding);
+		HttpProtocolParams.setUserAgent(params, userAgent);
 		HttpProtocolParams.setUseExpectContinue(params, false);
 		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+		if (proxy != null) {
+			log.info("using proxy");
+			params.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+		}
 	}
 
 	/**
@@ -121,12 +141,15 @@ public class WalleHttpClient {
 			updateCurrentCookies();
 			// 获取响应状态码
 			currentStatusCode = response.getStatusLine().getStatusCode();
-			logger.info("Response status code:" + currentStatusCode);
+			log.info("Response status code:" + currentStatusCode);
 			// 如果响应状态码表示需要重定向，更新currentRedirectUrl的值；否则获取响应实体
 			switch (currentStatusCode) {
-			case HttpStatus.SC_MOVED_TEMPORARILY:
+			case HttpStatus.SC_MULTIPLE_CHOICES:
 			case HttpStatus.SC_MOVED_PERMANENTLY:
+			case HttpStatus.SC_MOVED_TEMPORARILY:
 			case HttpStatus.SC_SEE_OTHER:
+			case HttpStatus.SC_NOT_MODIFIED:
+			case HttpStatus.SC_USE_PROXY:
 			case HttpStatus.SC_TEMPORARY_REDIRECT:
 				Header location = getCurrentHeader("location");
 				if (location == null) {
@@ -134,8 +157,10 @@ public class WalleHttpClient {
 				}
 				if (location != null) {
 					currentRedirectUrl = location.getValue();
+				} else {
+					currentRedirectUrl = null;
 				}
-				logger.info("Get redirect url:" + currentRedirectUrl);
+				log.info("Get redirect url:" + currentRedirectUrl);
 				break;
 			default:
 				resEntity = response.getEntity();
@@ -144,9 +169,9 @@ public class WalleHttpClient {
 
 		} catch (Exception e) {
 			currentStatusCode = 0;
-			logger.error("excute request exception", e);
+			log.error("excute request exception", e);
 		}
-		logger.info("Request end");
+		log.info("Request end");
 		return resEntity;
 	}
 
@@ -169,7 +194,7 @@ public class WalleHttpClient {
 		// TODO reqEntity为空会咋样？
 		currentHttpPost.setEntity(reqEntity);
 		// 执行post请求
-		logger.info("executing request " + currentHttpPost.getRequestLine());
+		log.info("executing request " + currentHttpPost.getRequestLine());
 		return excuteRequest(currentHttpPost);
 	}
 
@@ -194,7 +219,7 @@ public class WalleHttpClient {
 	 * @param requEncoding
 	 * @return
 	 */
-	private HttpEntity excuteHttpPost(String url, Map<String, String> formparamMap, String requEncoding) {
+	private HttpEntity excuteHttpPost(String url, Map<String, String> formparamMap) {
 		// 设置post请求的表单参数
 		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
 		for (String paramName : formparamMap.keySet()) {
@@ -212,7 +237,7 @@ public class WalleHttpClient {
 	 * @param requEncoding
 	 * @return
 	 */
-	private HttpEntity excuteHttpPost2(String url, Map<String, List<String>> formparamMap, String requEncoding) {
+	private HttpEntity excuteHttpPost2(String url, Map<String, List<String>> formparamMap) {
 		// 设置post请求的表单参数
 		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
 		for (String paramName : formparamMap.keySet()) {
@@ -250,7 +275,7 @@ public class WalleHttpClient {
 	 * @param respEncoding
 	 * @return
 	 */
-	public String httpPostResp(String url, InputStream in, String contentType, String respEncoding) {
+	public String httpPostResp(String url, InputStream in, String contentType) {
 		return HttpEntityHelper.entity2String(excuteHttpPost(url, in, contentType), respEncoding);
 	}
 
@@ -260,8 +285,8 @@ public class WalleHttpClient {
 	 * @param formparamMap
 	 * @param requEncoding
 	 */
-	public boolean httpPost(String url, Map<String, String> formparamMap, String requEncoding) {
-		HttpEntity httpEntity = excuteHttpPost(url, formparamMap, requEncoding);
+	public boolean httpPost(String url, Map<String, String> formparamMap) {
+		HttpEntity httpEntity = excuteHttpPost(url, formparamMap);
 		if (httpEntity == null) {
 			return false;
 		}
@@ -277,8 +302,8 @@ public class WalleHttpClient {
 	 * @param respEncoding
 	 * @return
 	 */
-	public String httpPostResp(String url, Map<String, String> formparamMap, String requEncoding, String respEncoding) {
-		return HttpEntityHelper.entity2String(excuteHttpPost(url, formparamMap, requEncoding), respEncoding);
+	public String httpPostResp(String url, Map<String, String> formparamMap, String requEncoding) {
+		return HttpEntityHelper.entity2String(excuteHttpPost(url, formparamMap), respEncoding);
 	}
 
 	/**
@@ -287,8 +312,8 @@ public class WalleHttpClient {
 	 * @param formparamMap
 	 * @param requEncoding
 	 */
-	public boolean httpPost2(String url, Map<String, List<String>> formparamMap, String requEncoding) {
-		HttpEntity httpEntity = excuteHttpPost2(url, formparamMap, requEncoding);
+	public boolean httpPost2(String url, Map<String, List<String>> formparamMap) {
+		HttpEntity httpEntity = excuteHttpPost2(url, formparamMap);
 		if (httpEntity == null) {
 			return false;
 		}
@@ -304,9 +329,8 @@ public class WalleHttpClient {
 	 * @param respEncoding
 	 * @return
 	 */
-	public String httpPostResp2(String url, Map<String, List<String>> formparamMap, String requEncoding,
-			String respEncoding) {
-		return HttpEntityHelper.entity2String(excuteHttpPost2(url, formparamMap, requEncoding), respEncoding);
+	public String httpPostResp2(String url, Map<String, List<String>> formparamMap) {
+		return HttpEntityHelper.entity2String(excuteHttpPost2(url, formparamMap), respEncoding);
 	}
 
 	/**
@@ -320,7 +344,7 @@ public class WalleHttpClient {
 		// TODO 是否应该重用这个对象呢
 		currentHttpGet = new HttpGet(url);
 		// 执行get请求
-		logger.info("executing request " + currentHttpGet.getRequestLine());
+		log.info("executing request " + currentHttpGet.getRequestLine());
 		return excuteRequest(currentHttpGet);
 	}
 
@@ -343,7 +367,7 @@ public class WalleHttpClient {
 	 * @param respEncoding
 	 * @return
 	 */
-	public String httpGetResp(String url, String respEncoding) {
+	public String httpGetResp(String url) {
 		return HttpEntityHelper.entity2String(excuteHttpGet(url), respEncoding);
 	}
 
@@ -363,10 +387,10 @@ public class WalleHttpClient {
 		}
 		if (getCurrentStatusCode() == 200) {
 			HttpEntityHelper.downloadFile(entity, filePath + fileName);
-			logger.info("finished download");
+			log.info("finished download");
 			return true;
 		} else {
-			logger.warn("nothing downloaded");
+			log.warn("nothing downloaded");
 			return false;
 		}
 	}
@@ -387,10 +411,10 @@ public class WalleHttpClient {
 	 * 关闭httpclient
 	 */
 	public void shutdown() {
-		logger.info("shuting down...");
+		log.info("shuting down...");
 		abortRequest();
 		httpclient.getConnectionManager().shutdown();
-		logger.info("shuted down");
+		log.info("shuted down");
 	}
 
 	/**
@@ -408,11 +432,11 @@ public class WalleHttpClient {
 	public void setProxy(HttpHost proxy) {
 		this.proxy = proxy;
 		if (proxy != null) {
-			logger.info("using proxy");
+			log.info("using proxy");
 			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		} else {
 			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
-			logger.info("without using proxy");
+			log.info("no longer using proxy");
 		}
 	}
 
@@ -505,4 +529,32 @@ public class WalleHttpClient {
 	public int getCurrentStatusCode() {
 		return currentStatusCode;
 	}
+
+	public String getRequEncoding() {
+		return requEncoding;
+	}
+
+	public void setRequEncoding(String requEncoding) {
+		this.requEncoding = requEncoding;
+	}
+
+	public String getRespEncoding() {
+		return respEncoding;
+	}
+
+	public void setRespEncoding(String respEncoding) {
+		this.respEncoding = respEncoding;
+		HttpProtocolParams.setContentCharset(httpclient.getParams(), respEncoding);
+		HttpProtocolParams.setHttpElementCharset(httpclient.getParams(), respEncoding);
+	}
+
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+		HttpProtocolParams.setUserAgent(httpclient.getParams(), userAgent);
+	}
+
 }

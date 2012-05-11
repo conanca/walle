@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import junit.framework.Assert;
 
@@ -18,7 +19,7 @@ public class WalleHttpClientTest {
 	private WalleHttpClient client;
 	public static final String itEyeUserName = "你在iteye上的用户名";
 	public static final String itEyeUserPass = "你在iteye上的密码";
-	
+
 	@Before
 	public void setUp() throws Exception {
 		client = new WalleHttpClient();
@@ -34,23 +35,9 @@ public class WalleHttpClientTest {
 	}
 
 	@Test
-	public void testHttpGetWithWrongUrl() {
-		String url = "htxxtp://baidu.com";
-		boolean isSuccess = client.httpGet(url);
-		assertEquals(false, isSuccess);
-	}
-
-	@Test
-	public void testHttpGetWithBadUrl() {
-		String url = "http://127.0.0.1";
-		boolean isSuccess = client.httpGet(url);
-		assertEquals(false, isSuccess);
-	}
-
-	@Test
 	public void testHttpGetHtmlWithRightUrl() {
 		String url = "http://baidu.com";
-		String content = client.httpGetResp(url, "utf-8");
+		String content = client.httpGetResp(url);
 		assertNotNull(content);
 	}
 
@@ -65,7 +52,7 @@ public class WalleHttpClientTest {
 	public void testAccessWebServiceSOAP11() throws IOException {
 		InputStream in = new FileInputStream("soap11.xml");
 		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
-				"text/xml; charset=utf-8", "UTF-8");
+				"text/xml; charset=utf-8");
 		assertNotNull(a);
 	}
 
@@ -73,25 +60,25 @@ public class WalleHttpClientTest {
 	public void testAccessWebServiceSOAP12() throws IOException {
 		InputStream in = new FileInputStream("soap12.xml");
 		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
-				"application/soap+xml; charset=utf-8", "UTF-8");
+				"application/soap+xml; charset=utf-8");
 		assertNotNull(a);
 	}
-	
+
 	@Test
-	public void testHttpPostWithForm(){
-		String loginPage = client.httpGetResp("http://www.iteye.com/login", "UTF-8");
+	public void testHttpPostWithForm() {
+		String loginPage = client.httpGetResp("http://www.iteye.com/login");
 		int index = loginPage.indexOf("<input name=\"authenticity_token\" type=\"hidden\" value=\"");
-		String token = loginPage.substring(index+54, index+54+44);
-		Map<String,String> form = new HashMap<String,String>();
-		form.put("authenticity_token",token);
+		String token = loginPage.substring(index + 54, index + 54 + 44);
+		Map<String, String> form = new HashMap<String, String>();
+		form.put("authenticity_token", token);
 		form.put("name", itEyeUserName);
 		form.put("password", itEyeUserPass);
 		form.put("remember_me", "1");
 		form.put("button", "登　录");
-		client.httpPost("http://www.iteye.com/login", form, "UTF-8");
-		String resp = client.httpGetResp(client.getCurrentRedirectUrl(), "UTF-8");
+		client.httpPost("http://www.iteye.com/login", form);
+		String resp = client.httpGetResp(client.getCurrentRedirectUrl());
 		// 若重定向至的iteye首页中含字符 “欢迎<用户名>”则表示登录成功
-		Assert.assertTrue(resp.contains("欢迎"+itEyeUserName));
+		Assert.assertTrue(resp.contains("欢迎" + itEyeUserName));
 	}
 	//	@BeforeClass
 	//	public static void setUpBeforeClass() throws Exception {
