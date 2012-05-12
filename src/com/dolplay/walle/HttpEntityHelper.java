@@ -89,6 +89,7 @@ public class HttpEntityHelper {
 	 */
 	protected static boolean downloadFile(HttpEntity entity, String filePath) {
 		InputStream input = null;
+		FileOutputStream output = null;
 		if (entity == null) {
 			logger.error("nothing downloaded");
 			return false;
@@ -96,7 +97,7 @@ public class HttpEntityHelper {
 		try {
 			input = entity.getContent();
 			File file = new File(filePath);
-			FileOutputStream output = FileUtils.openOutputStream(file);
+			output = FileUtils.openOutputStream(file);
 			IOUtils.copy(input, output);
 			return true;
 		} catch (Exception e) {
@@ -104,6 +105,7 @@ public class HttpEntityHelper {
 			return false;
 		} finally {
 			IOUtils.closeQuietly(input);
+			IOUtils.closeQuietly(output);
 		}
 	}
 }

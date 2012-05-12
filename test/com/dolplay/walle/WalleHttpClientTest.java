@@ -2,6 +2,7 @@ package com.dolplay.walle;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,9 +44,11 @@ public class WalleHttpClientTest {
 
 	@Test
 	public void testHttpGetDownloadWithRightUrl() {
-		boolean isSuccess = client.httpGetDownload(
+		String fileName = client.httpGetDownload(
 				"http://mirrors.devlib.org/apache//commons/jelly/binaries/commons-jelly-1.0.zip", "d:\\");
-		assertEquals(true, isSuccess);
+		File f = new File("d:\\"+fileName);
+		assertTrue(f.exists());
+		f.delete();
 	}
 
 	@Test

@@ -377,7 +377,7 @@ public class WalleHttpClient {
 	 * @param url
 	 * @param filePath
 	 */
-	public boolean httpGetDownload(String url, String filePath) {
+	public String httpGetDownload(String url, String filePath) {
 		HttpEntity entity = excuteHttpGet(url);
 		String fileName = url.substring(url.lastIndexOf("/") + 1);
 		Header contentDisposition = getCurrentHeader("content-disposition");
@@ -388,10 +388,10 @@ public class WalleHttpClient {
 		if (getCurrentStatusCode() == 200) {
 			HttpEntityHelper.downloadFile(entity, filePath + fileName);
 			log.info("finished download");
-			return true;
+			return fileName;
 		} else {
 			log.warn("nothing downloaded");
-			return false;
+			return null;
 		}
 	}
 
