@@ -45,16 +45,16 @@ public class WalleHttpClient {
 	}
 
 	private DefaultHttpClient httpclient;
-	
+
 	private HttpHost proxy;
 	private int timeOut;
 	private String userAgent;
 	private String requEncoding;
 	private String respEncoding;
-	
+
 	private HttpGet currentHttpGet;
 	private HttpPost currentHttpPost;
-	
+
 	private int currentStatusCode;
 	private String currentRedirectUrl;
 	private List<Cookie> currentCookies;
