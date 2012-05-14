@@ -1,6 +1,7 @@
 package com.dolplay.walle;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -80,8 +79,16 @@ public class WalleHttpClientTest {
 		client.httpPost("http://www.iteye.com/login", form);
 		String resp = client.httpGetResp(client.getCurrentRedirectUrl());
 		// 若重定向至的iteye首页中含字符 “欢迎<用户名>”则表示登录成功
-		Assert.assertTrue(resp.contains("欢迎" + itEyeUserName));
+		assertTrue(resp.contains("欢迎" + itEyeUserName));
 	}
+
+	@Test
+	public void testHttpPostWithNull() {
+		String url = "http://baidu.com";
+		boolean isSuccess = client.httpPost(url, null);
+		assertTrue(isSuccess);
+	}
+
 	//	@BeforeClass
 	//	public static void setUpBeforeClass() throws Exception {
 	//	}
