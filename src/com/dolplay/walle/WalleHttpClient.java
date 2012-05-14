@@ -15,6 +15,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -22,7 +23,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
@@ -44,7 +45,7 @@ public class WalleHttpClient {
 		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
 	}
 
-	private DefaultHttpClient httpclient;
+	private HttpClient httpclient;
 
 	private HttpHost proxy;
 	private int timeOut;
@@ -89,7 +90,7 @@ public class WalleHttpClient {
 	 * 初始化httpclient
 	 */
 	public void initHttpClient() {
-		httpclient = new DefaultHttpClient();
+		httpclient = HttpClientProvider.creatHttpClient();
 		HttpParams params = httpclient.getParams();
 		params.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeOut);
 		HttpProtocolParams.setContentCharset(params, respEncoding);
@@ -121,7 +122,7 @@ public class WalleHttpClient {
 	 */
 	private void updateCurrentCookies() {
 		// 获取当前cookies
-		currentCookies = httpclient.getCookieStore().getCookies();
+		currentCookies = ((AbstractHttpClient) httpclient).getCookieStore().getCookies();
 	}
 
 	/**
@@ -185,13 +186,6 @@ public class WalleHttpClient {
 		// 先终止上次的请求
 		abortRequest();
 		currentHttpPost = new HttpPost(url);
-		// TODO 应该重用链接
-		//		try {
-		//			currentHttpPost.setURI(new URI(url));
-		//		} catch (URISyntaxException e) {
-		//			e.printStackTrace();
-		//		}
-		// TODO reqEntity为空会咋样？
 		currentHttpPost.setEntity(reqEntity);
 		// 执行post请求
 		log.info("executing request " + currentHttpPost.getRequestLine());
@@ -221,9 +215,12 @@ public class WalleHttpClient {
 	 */
 	private HttpEntity excuteHttpPost(String url, Map<String, String> formparamMap) {
 		// 设置post请求的表单参数
-		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-		for (String paramName : formparamMap.keySet()) {
-			formparams.add(new BasicNameValuePair(paramName, formparamMap.get(paramName)));
+		List<NameValuePair> formparams = null;
+		if (formparamMap != null) {
+			formparams = new ArrayList<NameValuePair>();
+			for (String paramName : formparamMap.keySet()) {
+				formparams.add(new BasicNameValuePair(paramName, formparamMap.get(paramName)));
+			}
 		}
 		UrlEncodedFormEntity formEntity = HttpEntityHelper.makeUrlEncodedFormEntity(formparams, requEncoding);
 		// 执行post请求
@@ -239,11 +236,14 @@ public class WalleHttpClient {
 	 */
 	private HttpEntity excuteHttpPost2(String url, Map<String, List<String>> formparamMap) {
 		// 设置post请求的表单参数
-		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-		for (String paramName : formparamMap.keySet()) {
-			List<String> valueList = formparamMap.get(paramName);
-			for (String value : valueList) {
-				formparams.add(new BasicNameValuePair(paramName, value));
+		List<NameValuePair> formparams = null;
+		if (formparamMap != null) {
+			formparams = new ArrayList<NameValuePair>();
+			for (String paramName : formparamMap.keySet()) {
+				List<String> valueList = formparamMap.get(paramName);
+				for (String value : valueList) {
+					formparams.add(new BasicNameValuePair(paramName, value));
+				}
 			}
 		}
 		UrlEncodedFormEntity formEntity = HttpEntityHelper.makeUrlEncodedFormEntity(formparams, requEncoding);
@@ -341,7 +341,6 @@ public class WalleHttpClient {
 	private HttpEntity excuteHttpGet(String url) {
 		// 先终止上次的请求
 		abortRequest();
-		// TODO 是否应该重用这个对象呢
 		currentHttpGet = new HttpGet(url);
 		// 执行get请求
 		log.info("executing request " + currentHttpGet.getRequestLine());

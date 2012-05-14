@@ -44,12 +44,14 @@ public class HttpEntityHelper {
 		if (requEncoding == null) {
 			requEncoding = "UTF-8";
 		}
-		UrlEncodedFormEntity formEntity;
-		try {
-			formEntity = new UrlEncodedFormEntity(formparams, requEncoding);
-		} catch (UnsupportedEncodingException e) {
-			logger.error("make UrlEncodedFormEntity exception", e);
-			return null;
+		UrlEncodedFormEntity formEntity = null;
+		if (formparams != null) {
+			try {
+				formEntity = new UrlEncodedFormEntity(formparams, requEncoding);
+			} catch (UnsupportedEncodingException e) {
+				logger.error("make UrlEncodedFormEntity exception", e);
+				return null;
+			}
 		}
 		return formEntity;
 	}
