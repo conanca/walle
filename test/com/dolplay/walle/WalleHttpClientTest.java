@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import junit.framework.Assert;
 
@@ -32,7 +31,7 @@ public class WalleHttpClientTest {
 	public void testHttpGetWithRightUrl() {
 		String url = "http://baidu.com";
 		boolean isSuccess = client.httpGet(url);
-		assertEquals(true, isSuccess);
+		assertTrue(isSuccess);
 	}
 
 	@Test
