@@ -302,7 +302,7 @@ public class WalleHttpClient {
 	 * @param respEncoding
 	 * @return
 	 */
-	public String httpPostResp(String url, Map<String, String> formparamMap, String requEncoding) {
+	public String httpPostResp(String url, Map<String, String> formparamMap) {
 		return HttpEntityHelper.entity2String(excuteHttpPost(url, formparamMap), respEncoding);
 	}
 
