@@ -43,15 +43,16 @@ public class WalleHttpClientTest {
 	@Test
 	public void testHttpGetDownloadWithRightUrl() {
 		String fileName = client.httpGetDownload(
-				"http://mirrors.devlib.org/apache//commons/jelly/binaries/commons-jelly-1.0.zip", "src/test/resources/");
-		File f = new File("src/test/resources/" + fileName);
+				"http://mirrors.devlib.org/apache//commons/jelly/binaries/commons-jelly-1.0.zip", "temp/");
+		File f = new File("temp/" + fileName);
 		assertTrue(f.exists());
 		f.delete();
+		new File("temp/").delete();
 	}
 
 	@Test
 	public void testAccessWebServiceSOAP11() throws IOException {
-		InputStream in = new FileInputStream("src/test/resources/soap11.xml");
+		InputStream in = getClass().getResourceAsStream("/soap11.xml");
 		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
 				"text/xml; charset=utf-8");
 		assertNotNull(a);
@@ -59,7 +60,7 @@ public class WalleHttpClientTest {
 
 	@Test
 	public void testAccessWebServiceSOAP12() throws IOException {
-		InputStream in = new FileInputStream("src/test/resources/soap12.xml");
+		InputStream in = getClass().getResourceAsStream("/soap12.xml");
 		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
 				"application/soap+xml; charset=utf-8");
 		assertNotNull(a);
