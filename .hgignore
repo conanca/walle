@@ -3,7 +3,7 @@ syntax: glob
 .settings
 .classpath
 .project
-*.pyc
+target
 build
 classes
 bin

@@ -16,8 +16,8 @@ import org.junit.Test;
 public class WalleHttpClientTest {
 
 	private WalleHttpClient client;
-	public static final String itEyeUserName = "你在iteye上的用户名";
-	public static final String itEyeUserPass = "你在iteye上的密码";
+	public static final String itEyeUserName = "walletest";
+	public static final String itEyeUserPass = "walle123";
 
 	@Before
 	public void setUp() throws Exception {
@@ -43,15 +43,15 @@ public class WalleHttpClientTest {
 	@Test
 	public void testHttpGetDownloadWithRightUrl() {
 		String fileName = client.httpGetDownload(
-				"http://mirrors.devlib.org/apache//commons/jelly/binaries/commons-jelly-1.0.zip", "test\\");
-		File f = new File("test\\" + fileName);
+				"http://mirrors.devlib.org/apache//commons/jelly/binaries/commons-jelly-1.0.zip", "src/test/resources/");
+		File f = new File("src/test/resources/" + fileName);
 		assertTrue(f.exists());
 		f.delete();
 	}
 
 	@Test
 	public void testAccessWebServiceSOAP11() throws IOException {
-		InputStream in = new FileInputStream("test\\soap11.xml");
+		InputStream in = new FileInputStream("src/test/resources/soap11.xml");
 		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
 				"text/xml; charset=utf-8");
 		assertNotNull(a);
@@ -59,7 +59,7 @@ public class WalleHttpClientTest {
 
 	@Test
 	public void testAccessWebServiceSOAP12() throws IOException {
-		InputStream in = new FileInputStream("test\\soap12.xml");
+		InputStream in = new FileInputStream("src/test/resources/soap12.xml");
 		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
 				"application/soap+xml; charset=utf-8");
 		assertNotNull(a);
