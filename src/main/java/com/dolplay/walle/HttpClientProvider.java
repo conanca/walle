@@ -1,6 +1,5 @@
 package com.dolplay.walle;
 
-
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
@@ -21,17 +20,16 @@ public class HttpClientProvider {
 	
 	private static ThreadSafeClientConnManager cm;
 	
+	{
+		SchemeRegistry schemeRegistry = new SchemeRegistry();
+		schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+		schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
+		cm = new ThreadSafeClientConnManager(schemeRegistry);
+		cm.setMaxTotal(MAXTOTALCONNECTION);
+		cm.setDefaultMaxPerRoute(DEFAULTMAXCONNECTIONPERROUTE);
+	}
+
 	public static HttpClient creatHttpClient() {
-		if(null==cm){
-			SchemeRegistry schemeRegistry = new SchemeRegistry();
-			schemeRegistry.register(
-			         new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-			schemeRegistry.register(
-			         new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
-			cm = new ThreadSafeClientConnManager(schemeRegistry);
-			cm.setMaxTotal(MAXTOTALCONNECTION);
-			cm.setDefaultMaxPerRoute(DEFAULTMAXCONNECTIONPERROUTE);		 
-		}
 		HttpClient httpClient = new DefaultHttpClient(cm);
 		return httpClient;
 	}
