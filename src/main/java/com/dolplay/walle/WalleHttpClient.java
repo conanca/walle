@@ -482,7 +482,8 @@ public class WalleHttpClient {
 		Cookie returnCookie = null;
 		for (Cookie cookie : currentCookies) {
 			if (cookie.getName() != null && cookie.getName().equals(cookieName)) {
-				return returnCookie = cookie;
+				returnCookie = cookie;
+				break;
 			}
 		}
 		return returnCookie;
@@ -506,7 +507,8 @@ public class WalleHttpClient {
 		if (currentHeaders != null && currentHeaders.size() > 0) {
 			for (Header header : currentHeaders) {
 				if (header.getName() != null && header.getName().equals(headerName)) {
-					return returnHeader = header;
+					returnHeader = header;
+					break;
 				}
 			}
 		}
