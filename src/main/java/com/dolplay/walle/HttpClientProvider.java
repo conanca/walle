@@ -17,9 +17,9 @@ public class HttpClientProvider {
 	 * default max connection per route
 	 */
 	private static final int DEFAULTMAXCONNECTIONPERROUTE = 20;
-	
+
 	private static ThreadSafeClientConnManager cm;
-	
+
 	{
 		SchemeRegistry schemeRegistry = new SchemeRegistry();
 		schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
