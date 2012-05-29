@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HttpEntityHelper {
-	private static final Logger logger = LoggerFactory.getLogger(HttpEntityHelper.class);
+	private static final Logger logger = LoggerFactory.getLogger("com.dolplay.walle");
 
 	/**
 	 * 消耗给定的响应实体内容

@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class WalleHttpClient {
-	private static final Logger logger = LoggerFactory.getLogger(WalleHttpClient.class);
+	private static final Logger logger = LoggerFactory.getLogger("com.dolplay.walle");
 
 	private static final int DEFAULTTIMEOUT = 5000;
 	private static final String DEFAULTUSERAGENT = UserAgent.IE8;

@@ -32,7 +32,7 @@
    </rollingPolicy>
   </appender>
 
-  <root level="DEBUG">
+  <root name="com.dolplay.walle" level="DEBUG">
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="ROLLING_FILE"/>
   </root>
