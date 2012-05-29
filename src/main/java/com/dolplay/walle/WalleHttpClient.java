@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
@@ -28,6 +26,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 一个简单的Http客户端的单例类,尽可能的模拟浏览器的动作,包括：执行post和get,获取header和cookie
@@ -35,15 +35,12 @@ import org.apache.http.params.HttpProtocolParams;
  *
  */
 public class WalleHttpClient {
-	private static final Log log = LogFactory.getLog(WalleHttpClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(WalleHttpClient.class);
+
 	private static final int DEFAULTTIMEOUT = 5000;
 	private static final String DEFAULTUSERAGENT = UserAgent.IE8;
 	private static final String DEFAULTREQUENCODING = "UTF-8";
 	private static final String DEFAULTRESPENCODING = "UTF-8";
-
-	static {
-		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
-	}
 
 	private HttpClient httpclient;
 
@@ -99,7 +96,7 @@ public class WalleHttpClient {
 		HttpProtocolParams.setUseExpectContinue(params, false);
 		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 		if (proxy != null) {
-			log.info("using proxy");
+			logger.info("using proxy");
 			params.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		}
 	}
@@ -142,7 +139,7 @@ public class WalleHttpClient {
 			updateCurrentCookies();
 			// 获取响应状态码
 			currentStatusCode = response.getStatusLine().getStatusCode();
-			log.info("Response status code:" + currentStatusCode);
+			logger.info("Response status code:" + currentStatusCode);
 			// 如果响应状态码表示需要重定向，更新currentRedirectUrl的值；否则获取响应实体
 			switch (currentStatusCode) {
 			case HttpStatus.SC_MULTIPLE_CHOICES:
@@ -161,7 +158,7 @@ public class WalleHttpClient {
 				} else {
 					currentRedirectUrl = null;
 				}
-				log.info("Get redirect url:" + currentRedirectUrl);
+				logger.info("Get redirect url:" + currentRedirectUrl);
 				break;
 			default:
 				resEntity = response.getEntity();
@@ -170,9 +167,9 @@ public class WalleHttpClient {
 
 		} catch (Exception e) {
 			currentStatusCode = 0;
-			log.error("excute request exception", e);
+			logger.error("excute request exception", e);
 		}
-		log.info("Request end");
+		logger.info("Request end");
 		return resEntity;
 	}
 
@@ -188,7 +185,7 @@ public class WalleHttpClient {
 		currentHttpPost = new HttpPost(url);
 		currentHttpPost.setEntity(reqEntity);
 		// 执行post请求
-		log.info("executing request " + currentHttpPost.getRequestLine());
+		logger.info("executing request " + currentHttpPost.getRequestLine());
 		return excuteRequest(currentHttpPost);
 	}
 
@@ -343,7 +340,7 @@ public class WalleHttpClient {
 		abortRequest();
 		currentHttpGet = new HttpGet(url);
 		// 执行get请求
-		log.info("executing request " + currentHttpGet.getRequestLine());
+		logger.info("executing request " + currentHttpGet.getRequestLine());
 		return excuteRequest(currentHttpGet);
 	}
 
@@ -386,10 +383,10 @@ public class WalleHttpClient {
 		}
 		if (getCurrentStatusCode() == 200) {
 			HttpEntityHelper.downloadFile(entity, filePath + fileName);
-			log.info("finished download");
+			logger.info("finished download");
 			return fileName;
 		} else {
-			log.warn("nothing downloaded");
+			logger.warn("nothing downloaded");
 			return null;
 		}
 	}
@@ -410,10 +407,10 @@ public class WalleHttpClient {
 	 * 关闭httpclient
 	 */
 	public void shutdown() {
-		log.info("shuting down...");
+		logger.info("shuting down...");
 		abortRequest();
 		httpclient.getConnectionManager().shutdown();
-		log.info("shuted down");
+		logger.info("shuted down");
 	}
 
 	/**
@@ -431,11 +428,11 @@ public class WalleHttpClient {
 	public void setProxy(HttpHost proxy) {
 		this.proxy = proxy;
 		if (proxy != null) {
-			log.info("using proxy");
+			logger.info("using proxy");
 			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		} else {
 			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
-			log.info("no longer using proxy");
+			logger.info("no longer using proxy");
 		}
 	}
 

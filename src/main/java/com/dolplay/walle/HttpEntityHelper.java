@@ -9,16 +9,16 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpEntityHelper {
-	final private static Log logger = LogFactory.getLog(HttpEntityHelper.class);
+	private static final Logger logger = LoggerFactory.getLogger(HttpEntityHelper.class);
 
 	/**
 	 * 消耗给定的响应实体内容
