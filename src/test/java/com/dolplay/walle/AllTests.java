@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ WalleHttpClientTest.class, SSLTest.class })
+@SuiteClasses({ HttpGetTest.class, HttpPostTest.class, SSLTest.class, ShutdownTest.class, CurrentHeaderTest.class })
 public class AllTests {
 
 }

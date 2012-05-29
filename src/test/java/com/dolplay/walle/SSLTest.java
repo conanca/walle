@@ -13,7 +13,7 @@ public class SSLTest {
 	public void setUp() throws Exception {
 		client = new WalleHttpClient();
 		client.setTimeOut(30000);
-		//client.setProxy("202.84.17.41", 8080);
+		//		client.setProxy("192.168.2.61", 8080);
 	}
 
 	@Test
