@@ -3,7 +3,6 @@ package com.dolplay.walle;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,14 +17,14 @@ public class HttpPostTest {
 	public static final String itEyeUserPass = "walle123";
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		client = new WalleHttpClient();
 		client.setTimeOut(30000);
 		//		client.setProxy("192.168.2.61", 8080);
 	}
 
 	@Test
-	public void testAccessWebServiceSOAP11() throws IOException {
+	public void testAccessWebServiceSOAP11() {
 		InputStream in = getClass().getResourceAsStream("/soap11.xml");
 		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
 				"text/xml; charset=utf-8");
@@ -33,7 +32,7 @@ public class HttpPostTest {
 	}
 
 	@Test
-	public void testAccessWebServiceSOAP12() throws IOException {
+	public void testAccessWebServiceSOAP12() {
 		InputStream in = getClass().getResourceAsStream("/soap12.xml");
 		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
 				"application/soap+xml; charset=utf-8");
