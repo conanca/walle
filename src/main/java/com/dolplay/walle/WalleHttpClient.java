@@ -381,6 +381,7 @@ public class WalleHttpClient {
 		}
 		if (getCurrentStatusCode() == 200) {
 			HttpEntityHelper.downloadFile(entity, filePath + fileName);
+			HttpEntityHelper.consumeResponseEntity(entity);
 			logger.info("Finished download");
 			return fileName;
 		} else {
