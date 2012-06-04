@@ -427,11 +427,11 @@ public class WalleHttpClient {
 	public void setProxy(HttpHost proxy) {
 		this.proxy = proxy;
 		if (proxy != null) {
-			logger.info("Using proxy");
+			logger.info("Set using proxy");
 			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		} else {
 			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
-			logger.info("No longer using proxy");
+			logger.info("Set without using proxy");
 		}
 	}
 
