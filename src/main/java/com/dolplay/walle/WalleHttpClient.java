@@ -104,7 +104,7 @@ public class WalleHttpClient {
 		HttpProtocolParams.setUseExpectContinue(params, false);
 		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 		if (proxy != null) {
-			logger.info("using proxy");
+			logger.info("Using proxy");
 			params.setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		}
 	}
@@ -140,6 +140,7 @@ public class WalleHttpClient {
 		HttpEntity resEntity = null;
 		try {
 			// 执行请求
+			logger.info("Executing request:" + request.getRequestLine());
 			response = httpclient.execute(request);
 			// 更新当前Header
 			updateCurrentHeaders(response);
@@ -166,7 +167,7 @@ public class WalleHttpClient {
 				} else {
 					currentRedirectUrl = null;
 				}
-				logger.info("Get redirect url:" + currentRedirectUrl);
+				logger.info("Got redirect url:" + currentRedirectUrl);
 				break;
 			default:
 				resEntity = response.getEntity();
@@ -175,7 +176,7 @@ public class WalleHttpClient {
 
 		} catch (Exception e) {
 			currentStatusCode = 0;
-			logger.error("excute request exception", e);
+			logger.error("Executing request exception", e);
 		}
 		logger.info("Request end");
 		return resEntity;
@@ -193,7 +194,6 @@ public class WalleHttpClient {
 		currentHttpPost = new HttpPost(url);
 		currentHttpPost.setEntity(reqEntity);
 		// 执行post请求
-		logger.info("executing POST request " + currentHttpPost.getRequestLine());
 		return excuteRequest(currentHttpPost);
 	}
 
@@ -340,7 +340,6 @@ public class WalleHttpClient {
 		abortRequest();
 		currentHttpGet = new HttpGet(url);
 		// 执行get请求
-		logger.info("executing GET request " + currentHttpGet.getRequestLine());
 		return excuteRequest(currentHttpGet);
 	}
 
@@ -382,10 +381,10 @@ public class WalleHttpClient {
 		}
 		if (getCurrentStatusCode() == 200) {
 			HttpEntityHelper.downloadFile(entity, filePath + fileName);
-			logger.info("finished download");
+			logger.info("Finished download");
 			return fileName;
 		} else {
-			logger.warn("nothing downloaded");
+			logger.warn("Nothing downloaded");
 			return null;
 		}
 	}
@@ -406,10 +405,10 @@ public class WalleHttpClient {
 	 * 关闭httpclient
 	 */
 	public void shutdown() {
-		logger.info("shuting down...");
+		logger.info("Shuting down...");
 		abortRequest();
 		httpclient.getConnectionManager().shutdown();
-		logger.info("shuted down");
+		logger.info("Shuted down");
 	}
 
 	/**
@@ -427,11 +426,11 @@ public class WalleHttpClient {
 	public void setProxy(HttpHost proxy) {
 		this.proxy = proxy;
 		if (proxy != null) {
-			logger.info("using proxy");
+			logger.info("Using proxy");
 			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
 		} else {
 			httpclient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, null);
-			logger.info("no longer using proxy");
+			logger.info("No longer using proxy");
 		}
 	}
 
