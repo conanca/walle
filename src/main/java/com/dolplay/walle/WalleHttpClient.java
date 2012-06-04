@@ -66,13 +66,21 @@ public class WalleHttpClient {
 	}
 
 	/**
-	 * 构造一个WalleBrowser,并制定代理服务器
+	 * 构造一个WalleBrowser,并指定代理服务器
 	 * @param proxy
 	 */
 	public WalleHttpClient(HttpHost proxy) {
 		this(DEFAULTTIMEOUT, DEFAULTUSERAGENT, DEFAULTREQUENCODING, DEFAULTRESPENCODING, proxy);
 	}
 
+	/**
+	 * 构造一个WalleBrowser,并指定超时时间/user-agent/请求编码/相应编码代理服务器
+	 * @param timeOut
+	 * @param userAgent
+	 * @param requEncoding
+	 * @param respEncoding
+	 * @param proxy
+	 */
 	public WalleHttpClient(int timeOut, String userAgent, String requEncoding, String respEncoding, HttpHost proxy) {
 		super();
 		this.timeOut = timeOut;
@@ -84,7 +92,7 @@ public class WalleHttpClient {
 	}
 
 	/**
-	 * 初始化httpclient
+	 * 初始化httpclient,并设置参数
 	 */
 	public void initHttpClient() {
 		httpclient = HttpClientProvider.creatHttpClient();
@@ -193,6 +201,7 @@ public class WalleHttpClient {
 	 * 传一个输入流,执行post请求
 	 * @param url
 	 * @param in
+	 * @param contentType
 	 * @return
 	 */
 	private HttpEntity excuteHttpPost(String url, InputStream in, String contentType) {
@@ -207,7 +216,6 @@ public class WalleHttpClient {
 	 * 传表单参数Map,执行post请求
 	 * @param url
 	 * @param formparamMap
-	 * @param requEncoding
 	 * @return
 	 */
 	private HttpEntity excuteHttpPost(String url, Map<String, String> formparamMap) {
@@ -228,7 +236,6 @@ public class WalleHttpClient {
 	 * 传表单参数Map,执行post请求(用于参数值含多选框或checkbox的)
 	 * @param url
 	 * @param formparamMap
-	 * @param requEncoding
 	 * @return
 	 */
 	private HttpEntity excuteHttpPost2(String url, Map<String, List<String>> formparamMap) {
@@ -269,7 +276,6 @@ public class WalleHttpClient {
 	 * 可用于访问Web Service
 	 * @param url
 	 * @param reqEntity
-	 * @param respEncoding
 	 * @return
 	 */
 	public String httpPostResp(String url, InputStream in, String contentType) {
@@ -280,7 +286,6 @@ public class WalleHttpClient {
 	 * POST方式访问一个url,并提交参数
 	 * @param url
 	 * @param formparamMap
-	 * @param requEncoding
 	 */
 	public boolean httpPost(String url, Map<String, String> formparamMap) {
 		HttpEntity httpEntity = excuteHttpPost(url, formparamMap);
@@ -295,8 +300,6 @@ public class WalleHttpClient {
 	 * 传表单参数Map,执行post请求,返回响应的String内容
 	 * @param url
 	 * @param formparamMap
-	 * @param requEncoding
-	 * @param respEncoding
 	 * @return
 	 */
 	public String httpPostResp(String url, Map<String, String> formparamMap) {
@@ -307,7 +310,6 @@ public class WalleHttpClient {
 	 * POST方式访问一个url,并提交参数(用于参数值含多选框或checkbox的)
 	 * @param url
 	 * @param formparamMap
-	 * @param requEncoding
 	 */
 	public boolean httpPost2(String url, Map<String, List<String>> formparamMap) {
 		HttpEntity httpEntity = excuteHttpPost2(url, formparamMap);
@@ -322,8 +324,6 @@ public class WalleHttpClient {
 	 * 传表单参数Map,执行post请求,返回响应的String内容(用于表单参数含多选框或checkbox的)
 	 * @param url
 	 * @param formparamMap
-	 * @param requEncoding
-	 * @param respEncoding
 	 * @return
 	 */
 	public String httpPostResp2(String url, Map<String, List<String>> formparamMap) {
@@ -360,7 +360,6 @@ public class WalleHttpClient {
 	/**
 	 * 执行get请求,返回响应的String内容
 	 * @param url
-	 * @param respEncoding
 	 * @return
 	 */
 	public String httpGetResp(String url) {
