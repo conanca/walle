@@ -185,7 +185,7 @@ public class WalleHttpClient {
 		currentHttpPost = new HttpPost(url);
 		currentHttpPost.setEntity(reqEntity);
 		// 执行post请求
-		logger.info("executing request " + currentHttpPost.getRequestLine());
+		logger.info("executing POST request " + currentHttpPost.getRequestLine());
 		return excuteRequest(currentHttpPost);
 	}
 
@@ -340,7 +340,7 @@ public class WalleHttpClient {
 		abortRequest();
 		currentHttpGet = new HttpGet(url);
 		// 执行get请求
-		logger.info("executing request " + currentHttpGet.getRequestLine());
+		logger.info("executing GET request " + currentHttpGet.getRequestLine());
 		return excuteRequest(currentHttpGet);
 	}
 
