@@ -7,17 +7,17 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class HttpPostTest {
 
-	private WalleHttpClient client;
+	private static WalleHttpClient client;
 	public static final String itEyeUserName = "walletest";
 	public static final String itEyeUserPass = "walle123";
 
-	@Before
-	public void setUp() {
+	@BeforeClass
+	public static void setUpBeforeClass() {
 		client = new WalleHttpClient();
 		client.setTimeOut(30000);
 		//		client.setProxy("192.168.2.61", 8080);
@@ -26,16 +26,18 @@ public class HttpPostTest {
 	@Test
 	public void testAccessWebServiceSOAP11() {
 		InputStream in = getClass().getResourceAsStream("/soap11.xml");
-		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
+		String a = client.httpPostResp("http://webservice.webxml.com.cn/WebServices/qqOnlineWebService.asmx", in,
 				"text/xml; charset=utf-8");
+		System.out.println(a);
 		assertNotNull(a);
 	}
 
 	@Test
 	public void testAccessWebServiceSOAP12() {
 		InputStream in = getClass().getResourceAsStream("/soap12.xml");
-		String a = client.httpPostResp("http://www.webxml.com.cn/webservices/qqOnlineWebService.asmx", in,
+		String a = client.httpPostResp("http://webservice.webxml.com.cn/WebServices/qqOnlineWebService.asmx", in,
 				"application/soap+xml; charset=utf-8");
+		System.out.println(a);
 		assertNotNull(a);
 	}
 
