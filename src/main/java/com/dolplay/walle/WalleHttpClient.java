@@ -223,8 +223,8 @@ public class WalleHttpClient {
 		List<NameValuePair> formparams = null;
 		if (formparamMap != null) {
 			formparams = new ArrayList<NameValuePair>();
-			for (String paramName : formparamMap.keySet()) {
-				formparams.add(new BasicNameValuePair(paramName, formparamMap.get(paramName)));
+			for (Map.Entry<String, String> item : formparamMap.entrySet()) {
+				formparams.add(new BasicNameValuePair(item.getKey(), item.getValue()));
 			}
 		}
 		UrlEncodedFormEntity formEntity = HttpEntityHelper.makeUrlEncodedFormEntity(formparams, requEncoding);
@@ -243,10 +243,10 @@ public class WalleHttpClient {
 		List<NameValuePair> formparams = null;
 		if (formparamMap != null) {
 			formparams = new ArrayList<NameValuePair>();
-			for (String paramName : formparamMap.keySet()) {
-				List<String> valueList = formparamMap.get(paramName);
+			for (Map.Entry<String, List<String>> item : formparamMap.entrySet()) {
+				List<String> valueList = item.getValue();
 				for (String value : valueList) {
-					formparams.add(new BasicNameValuePair(paramName, value));
+					formparams.add(new BasicNameValuePair(item.getKey(), value));
 				}
 			}
 		}
