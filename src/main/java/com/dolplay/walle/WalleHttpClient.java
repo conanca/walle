@@ -94,7 +94,7 @@ public class WalleHttpClient {
 	/**
 	 * 初始化httpclient,并设置参数
 	 */
-	public void initHttpClient() {
+	public final void initHttpClient() {
 		httpclient = HttpClientProvider.creatHttpClient();
 		HttpParams params = httpclient.getParams();
 		params.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeOut);
