@@ -65,12 +65,9 @@ public class HttpEntityHelper {
 			logger.warn("response entity has no content");
 			return null;
 		}
-		if (respEncoding == null) {
-			respEncoding = "UTF-8";
-		}
 		String content = null;
 		try {
-			content = EntityUtils.toString(entity, respEncoding);
+			content = EntityUtils.toString(entity, respEncoding == null ? "UTF-8" : respEncoding);
 			EntityUtils.consume(entity);
 		} catch (Exception e) {
 			logger.error("entity to String content exception", e);
