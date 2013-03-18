@@ -373,7 +373,7 @@ public class WalleHttpClient {
 	 */
 	public String httpGetDownload(String url, String filePath) {
 		HttpEntity entity = excuteHttpGet(url);
-		String fileName = url.substring(url.lastIndexOf("/") + 1);
+		String fileName = url.substring(url.lastIndexOf('/') + 1);
 		Header contentDisposition = getCurrentHeader("content-disposition");
 		if (contentDisposition != null) {
 			String contentDispositionStr = getCurrentHeader("content-disposition").getValue();
