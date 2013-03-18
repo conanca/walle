@@ -6,7 +6,7 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 
 public class HttpClientProvider {
 	/**
@@ -18,13 +18,13 @@ public class HttpClientProvider {
 	 */
 	private static final int DEFAULTMAXCONNECTIONPERROUTE = 20;
 
-	private static ThreadSafeClientConnManager cm;
+	private static PoolingClientConnectionManager cm;
 
 	{
 		SchemeRegistry schemeRegistry = new SchemeRegistry();
 		schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
 		schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
-		cm = new ThreadSafeClientConnManager(schemeRegistry);
+		cm = new PoolingClientConnectionManager(schemeRegistry);
 		cm.setMaxTotal(MAXTOTALCONNECTION);
 		cm.setDefaultMaxPerRoute(DEFAULTMAXCONNECTIONPERROUTE);
 	}
