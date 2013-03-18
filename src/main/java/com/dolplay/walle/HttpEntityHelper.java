@@ -40,14 +40,10 @@ public class HttpEntityHelper {
 	 * @return
 	 */
 	protected static UrlEncodedFormEntity makeUrlEncodedFormEntity(List<NameValuePair> formparams, String requEncoding) {
-		// 设置post请求编码
-		if (requEncoding == null) {
-			requEncoding = "UTF-8";
-		}
 		UrlEncodedFormEntity formEntity = null;
 		if (formparams != null) {
 			try {
-				formEntity = new UrlEncodedFormEntity(formparams, requEncoding);
+				formEntity = new UrlEncodedFormEntity(formparams, requEncoding == null ? "UTF-8" : requEncoding);
 			} catch (UnsupportedEncodingException e) {
 				logger.error("make UrlEncodedFormEntity exception", e);
 				return null;
